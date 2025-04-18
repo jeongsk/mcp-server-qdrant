@@ -448,6 +448,48 @@ mcp dev src/mcp_server_qdrant/server.py
 
 Once started, open your browser to http://localhost:5173 to access the inspector interface.
 
+## Obsidian Notes to Qdrant
+
+이 프로젝트에는 옵시디언 노트를 Qdrant 벡터 데이터베이스에 저장하는 스크립트가 포함되어 있습니다. 이 스크립트는 옵시디언 볼트의 모든 마크다운 파일을 읽고, 텍스트를 적절한 크기로 청킹한 후 임베딩을 생성하여 Qdrant에 저장합니다.
+
+### 사용 방법
+
+1. `.env.example` 파일을 `.env`로 복사하고 필요한 환경 변수를 설정합니다:
+
+```bash
+cp .env.example .env
+```
+
+2. `.env` 파일을 편집하여 다음 환경 변수를 설정합니다:
+   - `OBSIDIAN_PATH`: 옵시디언 볼트 경로 (필수)
+   - `QDRANT_URL` 또는 `QDRANT_LOCAL_PATH`: Qdrant 서버 URL 또는 로컬 저장소 경로 (둘 중 하나는 필수)
+   - `QDRANT_API_KEY`: Qdrant API 키 (필요한 경우)
+   - `COLLECTION_NAME`: 컬렉션 이름 (기본값: obsidian-notes)
+   - `EMBEDDING_MODEL`: 임베딩 모델 이름 (기본값: sentence-transformers/all-MiniLM-L6-v2)
+   - `CHUNK_SIZE`: 청크 크기 (기본값: 1000)
+   - `CHUNK_OVERLAP`: 청크 간 겹치는 문자 수 (기본값: 200)
+
+3. 스크립트를 실행합니다:
+
+```bash
+python src/obsidian_to_qdrant.py
+```
+
+### 기능
+
+- 옵시디언 볼트의 모든 마크다운 파일을 재귀적으로 탐색
+- 마크다운 파일을 적절한 크기로 청킹 (문단, 문장, 또는 공백 기준)
+- 각 청크에 대한 메타데이터 저장 (파일 경로, 파일명, 청크 인덱스 등)
+- FastEmbed를 사용한 임베딩 생성
+- Qdrant에 임베딩 및 메타데이터 저장
+
+### 의존성
+
+이 스크립트는 다음 패키지에 의존합니다:
+- python-dotenv: 환경 변수 로드
+- fastembed: 텍스트 임베딩 생성
+- qdrant-client: Qdrant 벡터 데이터베이스 연결
+
 ## License
 
 This MCP server is licensed under the Apache License 2.0. This means you are free to use, modify, and distribute the
